@@ -1,0 +1,117 @@
+/* Styles for the navigation bar */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #253237;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+.navbar-title {
+    font-weight: bold;
+    font-size: 24px;
+    letter-spacing: 2px;
+}
+.navbar-options {
+    display: flex;
+    align-items: center;
+    background-color: #253237;
+    margin-right: -20px;
+    padding-right: 20px;
+}
+.navbar-option {
+    margin-left: 20px;
+    font-size: 18px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: #253237;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+.navbar-option:hover {
+    background-color: #52b69a;
+    color: #253237;
+}
+body {
+	background-color: rgb(135, 160, 160);
+}
+/* Styles for the product grid */
+.product-grid {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 20px;
+    margin: 0 auto; /* add this rule to center the grid horizontally */
+	max-width: 1200px; /* add this rule to set a maximum width for the grid */
+}
+
+.product {
+	flex-basis: calc(33.33% - 20px);
+	margin-bottom: 20px;
+	border: 2px solid #ddd;
+	border-radius: 5px;
+	overflow: hidden;
+	box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(135, 206, 235, 0.8);
+}
+
+.product img {
+    max-width: 50%;
+    max-height: 50%;
+}
+
+.product-title {
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+.product-price {
+	color: #52b69a;
+	margin-top: 5px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.grid-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    background-image: url("https://assets1.ignimgs.com/2018/02/24/rust-blogroll-1519436817760_160w.jpg?width=1280");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  }
+  
+  main {
+    flex-grow: 1;
+  }
+  
+  footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+  }
+
+

@@ -1,0 +1,383 @@
+<!-- Header 1 -->
+<header id="header" class="bg-white position-relative">
+    <div class="bg-topbar text-white py-2">
+        <div class="container">
+            <div class="row no-gutters align-items-center">
+                <div class="col-8 col-md-4 col-lg-4 text-heading-font">
+                    {% if basket.username %}
+                        <span class="d-none d-sm-inline">{{ __("Logged in as") }}</span> <strong>{{ basket.ign }}</strong>
+                        <a href="/checkout/logout" class="text-white text-capitalize ml-3"><span class="d-none d-sm-inline">{{ __("Logout") }}</span><i class="fa fa-sign-out-alt d-sm-none"></i></a>
+                    {% else %}
+                        <a class="text-white text-capitalize ml-3" href="/login">{{ __("Login") }}</a>
+                    {% endif %}
+                </div>
+
+                <div class="col-4 col-md-6 ml-lg-auto">
+                    <div class="dropdown text-right">
+                        <button class="btn btn-link text-white dropdown-toggle p-0 font-weight-bold" type="button" id="currencyButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ basket.currency }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="currencyButton">
+                            {% for currency in store.currencies %}
+                                {% if currency.code in [store.currency, "AUD", "BRL", "CAD", "DKK", "EUR", "NOK", "NZD", "GBP", "SEK", "USD", "PLN"] %}
+                                    <a class="dropdown-item  {% if basket.currency==currency.code %}active {% endif %}>" href="?currency={{ currency.code }}">{{ currency.code }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-none d-xl-block">
+        <div class="navbar navbar-expand-lg navbar-light bg-dark py-4">
+            <div class="container justify-content-center">
+                <div class="col-12 col-sm-3 px-0">
+                    <a href="/" class="navbar-brand d-flex justify-content-center text-primary text-heading-font mr-0">
+                        {% if store.logo %}
+                        <img class="mx-auto mx-sm-0" src="{{ store.logo }}" />
+                        {% else %}
+                        <strong class="mx-auto mx-sm-0 store-name">{{ store.name }}</strong>
+                        {% endif %}
+                    </a>
+                </div>
+                
+                
+            </div>
+        </div>
+
+
+        <nav class="navbar navbar-expand-lg navbar-light border-top border-bottom py-2 bg-navbar">
+            <div class="container px-0">
+                <div class="dropdown d-block d-sm-none  mt-lg-0">
+                    {% if basket.packages|length > 0 %}
+                    <button class="btn btn-primary dropdown-toggle d-block d-lg-inline-block w-100" type="button"
+                            id="basketDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-shopping-basket mr-2"></i>
+                        <strong>{{ _p(":count item for :amount :currency", basket.packages|length, {'count' :
+                            basket.packages|length, 'amount' : basket.price|money, 'currency' : basket.currency})
+                            }}</strong>
+                    </button>
+                    <div id="basket-dropdown" class="dropdown-menu dropdown-menu-left" aria-labelledby="basketDropdownButton">
+                        <div class="">
+                            <div class="row p-3">
+                                <div class="col-12">
+                                    <table class="table table-striped rounded border mb-0">
+                                        <tbody>
+                                        {% for package in basket.packages %}
+                                        <tr>
+                                            <td>{{ package.name[:25] }}</td>
+                                            <td>{{ package.price|money }} <small>{{ basket.currency }}</small></td>
+                                            <td class="text-right">
+                                                <a href="/checkout/packages/remove/{{ package.id }}" class="btn-link text-danger border-0"><i
+                                                        class="fas fa-times"></i>
+
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row align-items-center bg-light py-3 m-0 border-top">
+                                <div class="col-12 col-sm-6"> <strong>{{ __("Total") }}: </strong> {{
+                                    basket.price|money }} <small>{{ basket.currency }}</small></div>
+                                <div class="col-12 col-sm-6 text-right">
+                                    <a class="btn btn-primary" href="/checkout/basket">
+                                        {{__("Checkout") }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+
+                    <button class="btn btn-primary" disabled="disabled"><i class="icon-shopping-cart icon-white"></i>
+                        {{ _p(":count items for :amount :currency", basket.packages|length, {'count' :
+                        basket.packages|length, 'amount' : basket.price|money, 'currency' : basket.currency}) }}
+                    </button>
+                    {% endif %}
+                </div>
+
+                <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="icon-bar top-bar"></span>
+                    <span class="icon-bar middle-bar"></span>
+                    <span class="icon-bar bottom-bar"></span>
+                </button>
+                <div class="navbar-collapse mt-4 mt-lg-0 collapse" id="navbarSupportedContent">
+
+                    <ul class="navbar-nav text-uppercase flex-wrap">
+
+                        <li class="nav-item {% if page.category == "index" %}active{% endif %}">
+                        <a class="nav-link" href="/">{{ __("Home") }}</a>
+                        </li>
+
+                        {% for category in store.categories %}
+                        {% if category.subcategories|length > 0 %}
+                        <li class="nav-item dropdown dropdown {% if category.active %}active{% endif %}">
+                            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">{{ category.name
+                                }} </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% for subcategory in category.subcategories %}
+                                <a class="dropdown-item" href="/category/{{ subcategory.id }}">{{ subcategory.name
+                                    }}</a>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                        <li class="nav-item {% if category.active %}active{% endif %}"><a class="nav-link" href="/category/{{ category.id }}">{{
+                            category.name }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% for page in store.pages %}
+                        <li class="nav-item {% if page.active %}active{% endif %}"><a class="nav-link" href="/{{ page.slug }}">{{
+                            page.title }}</a></li>
+                        {% endfor %}
+
+                        {% if basket.packages|length > 0 %}
+                        <li class="visible-xs {% if page.category == " checkout" %}active{% endif %}"><a class="nav-link"
+                                                                                                         href="/checkout/basket">{{
+                        __("Checkout") }}</a></li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+                <div class="col-12 col-md-1">
+                    <div class="dropdown d-none d-sm-block d-lg-inline-block mt-3 mt-lg-0">
+                        {% if basket.packages|length > 0 %}
+                        <button class="btn btn-primary dropdown-toggle d-block d-lg-inline-block w-100" type="button"
+                                id="basketDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-shopping-basket mr-2"></i>
+                            <strong>{{ _p(":count item for :amount :currency", basket.packages|length, {'count' :
+                                basket.packages|length, 'amount' : basket.price|money, 'currency' : basket.currency})
+                                }}</strong>
+                        </button>
+                        <div id="basket-dropdown" class="dropdown-menu dropdown-menu-right" aria-labelledby="basketDropdownButton">
+                            <div class="">
+                                <div class="row p-3">
+                                    <div class="col-12">
+                                        <table class="table table-striped rounded border mb-0">
+                                            <tbody>
+                                            {% for package in basket.packages %}
+                                            <tr>
+                                                <td>{{ package.name[:25] }}</td>
+                                                <td>{{ package.price|money }} <small>{{ basket.currency }}</small></td>
+                                                <td class="text-right">
+                                                    <a href="/checkout/packages/remove/{{ package.id }}" class="btn-link text-danger border-0"><i
+                                                            class="fas fa-times"></i>
+    
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center bg-light py-3 m-0 border-top">
+                                    <div class="col-12 col-sm-6"> <strong>{{ __("Total") }}: </strong> {{
+                                        basket.price|money }} <small>{{ basket.currency }}</small></div>
+                                    <div class="col-12 col-sm-6 text-right">
+                                        <a class="btn btn-primary" href="/checkout/basket">
+                                            {{__("Checkout") }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+    
+                        <button class="btn btn-primary" disabled="disabled"><i class="icon-shopping-cart icon-white"></i>
+                            {{ _p(":count items for :amount :currency", basket.packages|length, {'count' :
+                            basket.packages|length, 'amount' : basket.price|money, 'currency' : basket.currency}) }}
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+        </nav>
+        
+    </div>
+
+    <div class="d-block d-xl-none">
+        <div class="navbar navbar-expand-xl navbar-light bg-white py-4">
+            <div class="container">
+                <div class="col-12 col-sm-3 px-0">
+                    <a href="/" class="navbar-brand d-flex align-items-center text-primary text-heading-font mr-0">
+                        {% if store.logo %}
+                        <img class="mx-auto mx-sm-0" src="{{ store.logo }}" />
+                        {% else %}
+                        <strong class="mx-auto mx-sm-0 store-name">{{ store.name }}</strong>
+                        {% endif %}
+                    </a>
+                </div>
+
+                <div class="col-12 col-sm-9 px-0">
+                    <div class="text-center text-sm-right">
+                        <div class="row mt-3 mt-sm-0">
+                            <div class="col-12 d-flex align-items-center">
+
+                            </div>
+                            <div class="col-12 col-md-6 d-none">
+                                <div class="dropdown d-none d-xl-inline-block mt-3 mt-lg-0">
+                                    {% if basket.packages|length > 0 %}
+                                    <button class="btn btn-primary dropdown-toggle d-block d-lg-inline-block w-100" type="button"
+                                            id="basketDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-shopping-basket mr-2"></i>
+                                        <strong>{{ _p(":count item for :amount :currency", basket.packages|length, {'count' :
+                                            basket.packages|length, 'amount' : basket.price|money, 'currency' : basket.currency})
+                                            }}</strong>
+                                    </button>
+                                    <div id="basket-dropdown" class="dropdown-menu dropdown-menu-left" aria-labelledby="basketDropdownButton">
+                                        <div class="">
+                                            <div class="row p-3">
+                                                <div class="col-12">
+                                                    <table class="table table-striped rounded border mb-0">
+                                                        <tbody>
+                                                        {% for package in basket.packages %}
+                                                        <tr>
+                                                            <td>{{ package.name[:25] }}</td>
+                                                            <td>{{ package.price|money }} <small>{{ basket.currency }}</small></td>
+                                                            <td class="text-right">
+                                                                <a href="/checkout/packages/remove/{{ package.id }}" class="btn-link text-danger border-0"><i
+                                                                        class="fas fa-times"></i>
+
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="row align-items-center bg-light py-3 m-0 border-top">
+                                                <div class="col-12 col-sm-6"> <strong>{{ __("Total") }}: </strong> {{
+                                                    basket.price|money }} <small>{{ basket.currency }}</small></div>
+                                                <div class="col-12 col-sm-6 text-right">
+                                                    <a class="btn btn-primary" href="/checkout/basket">
+                                                        {{__("Checkout") }}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+
+                                    <button class="btn btn-primary" disabled="disabled"><i class="icon-shopping-cart icon-white"></i>
+                                        {{ _p(":count items for :amount :currency", basket.packages|length, {'count' :
+                                        basket.packages|length, 'amount' : basket.price|money, 'currency' : basket.currency}) }}
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <nav class="header-2 navbar navbar-expand-xl navbar-light border-top border-bottom py-2 bg-navbar">
+            <div class="container px-0">
+                <div class="dropdown d-block d-xl-none  mt-lg-0">
+                    {% if basket.packages|length > 0 %}
+                    <button class="btn btn-primary dropdown-toggle d-block d-lg-inline-block w-100" type="button"
+                            id="basketDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-shopping-basket mr-2"></i>
+                        <strong>{{ _p(":count item for :amount :currency", basket.packages|length, {'count' :
+                            basket.packages|length, 'amount' : basket.price|money, 'currency' : basket.currency})
+                            }}</strong>
+                    </button>
+                    <div id="basket-dropdown" class="dropdown-menu dropdown-menu-left" aria-labelledby="basketDropdownButton">
+                        <div class="">
+                            <div class="row p-3">
+                                <div class="col-12">
+                                    <table class="table table-striped rounded border mb-0">
+                                        <tbody>
+                                        {% for package in basket.packages %}
+                                        <tr>
+                                            <td>{{ package.name[:25] }}</td>
+                                            <td>{{ package.price|money }} <small>{{ basket.currency }}</small></td>
+                                            <td class="text-right">
+                                                <a href="/checkout/packages/remove/{{ package.id }}" class="btn-link text-danger border-0"><i
+                                                        class="fas fa-times"></i>
+
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row align-items-center bg-light py-3 m-0 border-top">
+                                <div class="col-12 col-sm-6"> <strong>{{ __("Total") }}: </strong> {{
+                                    basket.price|money }} <small>{{ basket.currency }}</small></div>
+                                <div class="col-12 col-sm-6 text-right">
+                                    <a class="btn btn-primary" href="/checkout/basket">
+                                        {{__("Checkout") }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+
+                    <button class="btn btn-primary" disabled="disabled"><i class="icon-shopping-cart icon-white"></i>
+                        {{ _p(":count items for :amount :currency", basket.packages|length, {'count' :
+                        basket.packages|length, 'amount' : basket.price|money, 'currency' : basket.currency}) }}
+                    </button>
+                    {% endif %}
+                </div>
+
+                <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#mobileSupportedContent"
+                        aria-controls="mobileSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="icon-bar top-bar"></span>
+                    <span class="icon-bar middle-bar"></span>
+                    <span class="icon-bar bottom-bar"></span>
+                </button>
+                <div class="navbar-collapse mt-4 mt-lg-0 collapse" id="mobileSupportedContent">
+
+                    <ul class="navbar-nav text-uppercase flex-wrap my-2 my-xl-0">
+
+                        <li class="nav-item {% if page.category == "index" %}active{% endif %}">
+                        <a class="nav-link" href="/">{{ __("Home") }}</a>
+                        </li>
+
+                        {% for category in store.categories %}
+                        {% if category.subcategories|length > 0 %}
+                        <li class="nav-item dropdown dropdown {% if category.active %}active{% endif %}">
+                            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">{{ category.name
+                                }} </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% for subcategory in category.subcategories %}
+                                <a class="dropdown-item" href="/category/{{ subcategory.id }}">{{ subcategory.name
+                                    }}</a>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                        <li class="nav-item {% if category.active %}active{% endif %}"><a class="nav-link" href="/category/{{ category.id }}">{{
+                            category.name }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% for page in store.pages %}
+                        <li class="nav-item {% if page.active %}active{% endif %}"><a class="nav-link" href="/{{ page.slug }}">{{
+                            page.title }}</a></li>
+                        {% endfor %}
+
+                        {% if basket.packages|length > 0 %}
+                        <li class="visible-xs {% if page.category == " checkout" %}active{% endif %}"><a class="nav-link"
+                                                                                                         href="/checkout/basket">{{
+                        __("Checkout") }}</a></li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+</header>
